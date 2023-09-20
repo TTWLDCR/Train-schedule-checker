@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+    <title>滑动切换的注册登录界面</title>
+    <link rel="stylesheet" href="../static/login.css">
+</head>
+
+<body>
+<div class="container">
+    <div class="form-box">
+        <!-- 注册 -->
+        <div class="register-box hidden">
+            <h1>register</h1>
+            <input type="text" placeholder="用户名" id="username1">
+            <input type="password" placeholder="密码" id="password1">
+            <input type="password" placeholder="确认密码" id="confirm-password">
+            <button class="card-button" id="register-button">注册</button>
+        </div>
+        <!-- 登录 -->
+        <div class="login-box">
+            <h1>login</h1>
+            <input type="text" placeholder="用户名" id="username2">
+            <input type="password" placeholder="密码" id="password2">
+            <button class="card-button" id="login-button">登录</button>
+        </div>
+    </div>
+    <div class="con-box left">
+        <h2>欢迎来到<span><br></br>火车时刻查询系统</span></h2>
+        <img src="../static/1.png" alt="">
+        <p>已有账号</p>
+        <button id="login">去登录</button>
+    </div>
+    <div class="con-box right">
+        <h2>欢迎来到<span><br></br>火车时刻查询系统</span></h2>
+        <img src="../static/2.png" alt="">
+        <p>没有账号？</p>
+        <button id="register">去注册</button>
+    </div>
+</div>
+<script>
+    let login=document.getElementById('login');
+    let register=document.getElementById('register');
+    let form_box=document.getElementsByClassName('form-box')[0];
+    let register_box=document.getElementsByClassName('register-box')[0];
+    let login_box=document.getElementsByClassName('login-box')[0];
+    // 去注册按钮点击事件
+    register.addEventListener('click',()=>{
+        form_box.style.transform='translateX(80%)';
+        login_box.classList.add('hidden');
+        register_box.classList.remove('hidden');
+        document.getElementById("register-button").addEventListener("click", function(event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
+
+            // 获取用户名和密码输入框的值
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+            let confirmPassword = document.getElementById("confirm-password").value;
+
+            // 创建一个对象存储用户名和密码
+            let data = {
+                username: username,
+                password: password,
+                confirmPassword: confirmPassword
+            };
+
+            // 发送POST请求到后端
+            fetch("/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    // 处理后端返回的结果
+                    if (result.message === "用户名已存在") {
+                        showErrorModal("用户名已存在");
+                    }
+                    if (result.message === "密码不一致") {
+                        showErrorModal("密码不一致");
+                    }
+                    if (result.message === "登录成功") {
+                        handleLoginSuccess();
+                    }
+                })
+                .catch(error => {
+                    // 处理错误
+                    console.error(error);
+                });
+        });
+    })
+    // 去登录按钮点击事件
+    login.addEventListener('click',()=>{
+        form_box.style.transform='translateX(0%)';
+        register_box.classList.add('hidden');
+        login_box.classList.remove('hidden');
+        document.getElementById("login-button").addEventListener("click", function(event) {
+            event.preventDefault(); // 阻止表单的默认提交行为
+
+            // 获取用户名和密码输入框的值
+            let username = document.getElementById("username").value;
+            let password = document.getElementById("password").value;
+
+            // 创建一个对象存储用户名和密码
+            let data = {
+                username: username,
+                password: password
+            };
+
+            // 发送POST请求到后端
+            fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(result => {
+                    // 处理后端返回的结果
+                    if (result.message === "用户名或密码错误") {
+                        showErrorModal("用户名或密码错误，请重新输入");
+                    }
+                    if (result.message === "登录成功") {
+                        handleLoginSuccess();
+                    }
+                })
+                .catch(error => {
+                    // 处理错误
+                    console.error(error);
+                });
+        });
+    })
+    function handleRegisterSuccess(message) {
+        alert(message)
+    }
+
+    function showErrorModal(message) {
+        alert(message);
+    }
+
+    function handleLoginSuccess() {
+        window.location.href = "/homepage";
+    }
+</script>
+</body>
+</html>

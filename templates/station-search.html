@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>车站查询</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "poppins", Arial, Helvetica, sans-serif;
+            background: linear-gradient(to bottom, #f4f4f4, #f1f1f1);
+        }
+
+        .container {
+            height: 100vh;
+            display: grid;
+            place-items: center;
+        }
+
+        a {
+            text-decoration: none;
+            color: #000;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #f4f4f4;
+            width: 100%;
+            max-width: 600px;
+            padding: 2em;
+            border-radius: 20px;
+            box-shadow: -40px -40px 80px rgb(255, 255, 255),
+            40px 40px 80px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-title {
+            font-size: 40px;
+            color: #565656;
+            align-items: center;
+        }
+
+        .card-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            width: 100%;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .card-input-container {
+            position: relative;
+            margin: 0.5rem 0 2rem;
+            width: 100%;
+        }
+
+        .card-form label {
+            color: #b6b6b6;
+        }
+
+        .card-input-container input::placeholder {
+            color: #b6b6b6;
+        }
+
+        .card-input-container input,
+        .card-button {
+            width: 100%;
+            border: none;
+            outline: none;
+            border-radius: 10px;
+            font-family: "poppins", Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-input-container input {
+            padding: 1em 2em 1em 4em;
+            font-size: 14px;
+            color: #b6b6b6;
+            background: #f4f4f4;
+            box-shadow: -10px -10px 20px rgb(255, 255, 255),
+            10px 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-input-container input:focus {
+            box-shadow: inset -5px -5px 10px rgb(255, 255, 255),
+            inset 5px 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-button {
+            background: #565656;
+            padding: 1em;
+            color: #f4f4f4;
+            cursor: pointer;
+            box-shadow: -10px -10px 20px rgb(255, 255, 255),
+            10px 10px 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-button:focus,
+        .card-button:hover {
+            box-shadow: inset -5px -5px 10px rgba(255, 255, 255, 0.4),
+            inset 5px 5px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-result {
+            margin-top: 2em;
+        }
+
+        .card-result table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .card-result th,
+        .card-result td {
+            padding: 0.5em;
+            text-align: center;
+            border: 1px solid #b6b6b6;
+        }
+
+        .card-result th {
+            background-color: #f4f4f4;
+            color: #565656;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1 class="card-title">车站查询</h1>
+
+        <div class="card-form">
+            <div class="card-input-container">
+                <label for="station-name">车站名称</label>
+                <input type="text" id="station-name" placeholder="请输入车站名称">
+            </div>
+            <button class="card-button" onclick="searchStation()">查询</button>
+            <a class="card-button" href="/homepage">
+                <span>返回</span>
+            </a>
+        </div>
+
+        <div class="card-result" id="result-container">
+            <!-- 查询结果将动态填充到这里 -->
+        </div>
+    </div>
+</div>
+
+<script>
+    function searchStation() {
+        let stationName = document.getElementById("station-name").value;
+        // 发送POST请求到后端
+        let data = {
+            stationName:stationName
+        }
+
+        let trainStruct = {
+            trainName:"",
+            stationName:"",
+            arrivalTime:"",
+            departureTime:"",
+            distance:0
+        };
+
+        let stationData = [];
+
+        fetch("/station-search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                stationData = result;
+                displayTrainData(stationData);
+            })
+            .catch(error => {
+                // 处理错误
+                console.error(error);
+            });
+    }
+    function displayTrainData(stationData) {
+        let resultContainer = document.getElementById("result-container");
+        resultContainer.innerHTML = "";
+
+        let table = document.createElement("table");
+        let thead = document.createElement("thead");
+        let tbody = document.createElement("tbody");
+
+        let headerRow = document.createElement("tr");
+        let headers = ["车次名称", "到时", "开时"];
+
+        headers.forEach(function(header) {
+            let th = document.createElement("th");
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        stationData.forEach(function(train) {
+            let row = document.createElement("tr");
+            let trainInfo = [
+                train.trainName,
+                train.arrivalTime,
+                train.departureTime
+            ];
+
+            trainInfo.forEach(function(info) {
+                let td = document.createElement("td");
+                td.textContent = info;
+                row.appendChild(td);
+            });
+
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        resultContainer.appendChild(table);
+    }
+</script>
+</body>
+</html>
+

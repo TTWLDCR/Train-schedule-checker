@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>火车时刻查询系统</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap");
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "poppins", Arial, Helvetica, sans-serif;
+      background: linear-gradient(to bottom, #f4f4f4, #f1f1f1);
+    }
+
+    .container {
+      height: 100vh;
+      display: grid;
+      place-items: center;
+    }
+
+    a {
+      text-decoration: none;
+      color: #000;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f4f4f4;
+      width: 100%;
+      max-width: 400px;
+      padding: 2em;
+      border-radius: 20px;
+      box-shadow: -40px -40px 80px rgb(255, 255, 255),
+      40px 40px 80px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-title {
+      font-size: 40px;
+      color: #565656;
+      align-items: center;
+    }
+
+    .card-subtitle {
+      color: #565656;
+    }
+
+    .card-buttons {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2em;
+    }
+
+    .card-button {
+      background: #565656;
+      padding: 1em;
+      color: #f4f4f4;
+      cursor: pointer;
+      box-shadow: -10px -10px 20px rgb(255, 255, 255),
+      10px 10px 20px rgba(0, 0, 0, 0.4);
+      margin-bottom: 1.5rem;
+      width: 100%;
+      max-width: 200px;
+      text-align: center;
+      font-size: 20px;
+      border-radius: 10px;
+    }
+
+    .card-button:focus,
+    .card-button:hover {
+      box-shadow: inset -5px -5px 10px rgba(255, 255, 255, 0.4),
+      inset 5px 5px 10px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <h1 class="card-title">火车时刻查询系统</h1>
+
+    <div class="card-buttons">
+      <a href="/station-to-station" class="card-button">站站查询</a>
+      <a href="/train-search" class="card-button">车次查询</a>
+      <a href="/station-search" class="card-button">车站查询</a>
+      <a class="card-button" href="/login">
+        <span>退出</span>
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
